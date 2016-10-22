@@ -8,10 +8,10 @@ Dumps dialogs from Vk using vk api
 * Install requirements
 ```
 pip install -r requirements.txt
-``
+```
 
 * Create configuration JSON file with folloeing contents
-```
+```json
 {
 	"acess_token": "<access_token>"
 }
