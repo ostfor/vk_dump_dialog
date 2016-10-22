@@ -5,15 +5,15 @@ import time
 import vk
 
 
-def get_dialogs(user_id, res_file, batch_width=200, config_path="config.json"):
+def get_dialogs(user_id, batch_width=200, config_path="config.json"):
     with open(config_path) as f:
         cfg = json.load(f)
     sess = vk.Session(access_token=cfg["acess_token"])
     api = vk.API(sess)
-    data = api.messages.getHistory(user_id=user_id, count=res_file)
-    count = data[0]
+    data = api.messages.getHistory(user_id=user_id, count=1)
+    count = int(data[0])
     messages = []
-    for i in range(math.ceil(count / batch_width)):
+    for i in range(int(math.ceil(count / batch_width))):
         messages += api.messages.getHistory(user_id=user_id, count=batch_width,
                                             offset=i * batch_width)[1:]
     if count != len(messages):
@@ -27,10 +27,10 @@ def parse_data_and_print(messages):
         print msg['out'], time.asctime(time.gmtime(msg['date'])), msg['body']
 
 def process(user_id, res_file, batch_width=200, config_path="config.json"):
-    messages = get_dialogs(user_id, res_file, batch_width, config_path)
+    messages = get_dialogs(user_id, batch_width, config_path)
     with open(res_file, 'w') as f:
         json.dump(messages, f)
-        parse_data_and_print(messages)
+    parse_data_and_print(messages)
 
 def main():
     parser = argparse.ArgumentParser()
