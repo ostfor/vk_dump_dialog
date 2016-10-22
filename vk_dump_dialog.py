@@ -4,6 +4,9 @@ import math
 import time
 import vk
 
+REQUEST_COUNT_THRESHOLD = 5
+DELAY = 1
+
 
 def get_dialogs(user_id, batch_width=200, config_path="config.json"):
     with open(config_path) as f:
@@ -14,8 +17,11 @@ def get_dialogs(user_id, batch_width=200, config_path="config.json"):
     count = int(data[0])
     messages = []
     for i in range(int(math.ceil(count / batch_width))):
+        if i % REQUEST_COUNT_THRESHOLD == 0:
+            time.sleep(DELAY)
         messages += api.messages.getHistory(user_id=user_id, count=batch_width,
                                             offset=i * batch_width)[1:]
+
     if count != len(messages):
         print ("Warning: messages count "
                "is not expected {} != {}".format(count, len(messages)))
@@ -26,11 +32,13 @@ def parse_data_and_print(messages):
     for msg in messages[::-1]:
         print msg['out'], time.asctime(time.gmtime(msg['date'])), msg['body']
 
+
 def process(user_id, res_file, batch_width=200, config_path="config.json"):
     messages = get_dialogs(user_id, batch_width, config_path)
     with open(res_file, 'w') as f:
         json.dump(messages, f)
     parse_data_and_print(messages)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -43,7 +51,7 @@ def main():
                         default="config.json")
     args = parser.parse_args()
     process(args.user_id, args.result_file, args.batch_width,
-                args.config_path)
+            args.config_path)
 
 
 if __name__ == '__main__':
