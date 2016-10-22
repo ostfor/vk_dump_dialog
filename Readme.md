@@ -16,4 +16,4 @@ pip install -r requirements.txt
 	"acess_token": "<access_token>"
 }
 ```
-Where `acess_token` is token, got from (Vk API)[http://vk.com/dev]
+Where `acess_token` is token, got from [Vk API](http://vk.com/dev)
